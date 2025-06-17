@@ -411,7 +411,7 @@ const ContestHistory = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:8000/contest/all?handle=${handle}`,
+        `${import.meta.env.VITE_API_URL}/contest/all?handle=${handle}`,
         {
           headers: {
             authorization: `Bearer ${token}`,
@@ -523,7 +523,7 @@ const ProblemSolving = () => {
   
     try {
       const response = await axios.get(
-        `http://localhost:8000/submission/all?handle=${handle}&days=${totalDays}`,
+        `${import.meta.env.VITE_API_URL}/submission/all?handle=${handle}&days=${totalDays}`,
         {
           headers: {
             authorization: `Bearer ${token}`,
