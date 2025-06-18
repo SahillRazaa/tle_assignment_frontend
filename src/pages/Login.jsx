@@ -148,7 +148,6 @@ function Login() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPassword, setCopiedPassword] = useState(false);
 
-  // Consider moving these to environment variables or a secure configuration
   const adminEmail = "tleassignment@gmail.com"
   const adminPassword = "submittedbysahil"
 
@@ -217,7 +216,6 @@ function Login() {
           </StyledCardHeader>
           <CardContent>
             <Form onSubmit={handleSubmit(onSubmit)}>
-              {/* Assuming `Input` component also handles its own responsiveness for internal elements like labels/placeholders */}
               <Input
                 id="email"
                 type="email"
@@ -251,7 +249,6 @@ function Login() {
               />
 
               <ButtonWrapper>
-                {/* Assuming `Button` component is full-width by default or has responsive styles */}
                 <Button type="submit" isLoading={isLoading}>
                   Sign In
                 </Button>
@@ -259,7 +256,6 @@ function Login() {
             </Form>
             <CredentialsContainer>
               <Subtitle>Login Credentials</Subtitle>
-              {/* Added a styled Subtitle for better spacing control on mobile */}
               <Subtitle style={{marginTop: "20px"}}>Email:</Subtitle>
               <Credential>
                 <EmailCred>{adminEmail}</EmailCred>

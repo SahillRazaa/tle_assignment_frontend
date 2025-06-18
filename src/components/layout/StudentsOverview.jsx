@@ -687,7 +687,7 @@ const StudentsOverview = () => {
       message: "Data is synced till last year only"
     })
     dispatch(setStudentData(data));
-    navigate('/profile/sahil/1234');
+    navigate(`/profile/${data.handle}/${data._id}`);
   };
 
   const TableRowVirtualized = useCallback(({ index, style }) => {
