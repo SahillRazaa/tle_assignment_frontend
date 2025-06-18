@@ -15,16 +15,33 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 1rem; /* Add padding for smaller screens */
+
+  @media (max-width: 480px) {
+    padding: 0.75rem; /* Reduce padding further on very small screens */
+  }
 `;
 
 const Wrapper = styled.div`
   width: 100%;
-  max-width: 28rem;
+  max-width: 28rem; /* Original max-width */
+
+  @media (max-width: 768px) {
+    max-width: 24rem; /* Slightly narrower on tablets */
+  }
+
+  @media (max-width: 480px) {
+    max-width: 90%; /* Take up more width on smaller phones */
+  }
 `;
 
 const CenterText = styled.div`
   text-align: center;
   margin-bottom: 2rem;
+
+  @media (max-width: 480px) {
+    margin-bottom: 1.5rem;
+  }
 `;
 
 const Title = styled.h1`
@@ -32,11 +49,18 @@ const Title = styled.h1`
   font-weight: bold;
   color: #0f172a;
 
+  @media (max-width: 480px) {
+    font-size: 1.5rem; /* Smaller title on mobile */
+  }
 `;
 
 const Subtitle = styled.p`
   color: #475569;
   margin-top: 0.25rem;
+
+  @media (max-width: 480px) {
+    font-size: 0.875rem; /* Smaller subtitle on mobile */
+  }
 `;
 
 const StyledCard = styled(Card)`
@@ -58,6 +82,10 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   gap: 1rem;
+
+  @media (max-width: 480px) {
+    gap: 0.75rem; /* Slightly less gap between inputs on mobile */
+  }
 `;
 
 const ButtonWrapper = styled.div`
@@ -69,6 +97,11 @@ const CredentialsContainer = styled.div`
   background-color: #f1f5f9;
   padding: 1rem;
   border-radius: 0.5rem;
+
+  @media (max-width: 480px) {
+    margin-top: 1.5rem; /* Smaller top margin on mobile */
+    padding: 0.75rem; /* Reduced padding for credentials container */
+  }
 `;
 
 const Credential = styled.div`
@@ -91,14 +124,21 @@ const Credential = styled.div`
       color: #1e293b;
     }
   }
+
+  @media (max-width: 480px) {
+    padding: 0.6rem 0.8rem; /* Slightly smaller padding for credentials */
+    font-size: 0.8rem; /* Smaller font for credentials on mobile */
+  }
 `;
 
 const EmailCred = styled.span`
   font-weight: 500;
+  word-break: break-all; /* Ensure long emails break to new line if necessary */
 `;
 
 const PasswordCred = styled.span`
   font-weight: 500;
+  word-break: break-all; /* Ensure long passwords break to new line if necessary */
 `;
 
 function Login() {
@@ -108,6 +148,7 @@ function Login() {
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [copiedPassword, setCopiedPassword] = useState(false);
 
+  // Consider moving these to environment variables or a secure configuration
   const adminEmail = "tleassignment@gmail.com"
   const adminPassword = "submittedbysahil"
 
@@ -176,6 +217,7 @@ function Login() {
           </StyledCardHeader>
           <CardContent>
             <Form onSubmit={handleSubmit(onSubmit)}>
+              {/* Assuming `Input` component also handles its own responsiveness for internal elements like labels/placeholders */}
               <Input
                 id="email"
                 type="email"
@@ -209,6 +251,7 @@ function Login() {
               />
 
               <ButtonWrapper>
+                {/* Assuming `Button` component is full-width by default or has responsive styles */}
                 <Button type="submit" isLoading={isLoading}>
                   Sign In
                 </Button>
@@ -216,6 +259,7 @@ function Login() {
             </Form>
             <CredentialsContainer>
               <Subtitle>Login Credentials</Subtitle>
+              {/* Added a styled Subtitle for better spacing control on mobile */}
               <Subtitle style={{marginTop: "20px"}}>Email:</Subtitle>
               <Credential>
                 <EmailCred>{adminEmail}</EmailCred>

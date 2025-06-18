@@ -8,43 +8,86 @@ import {
 import CalendarHeatmap from 'react-calendar-heatmap';
 import 'react-calendar-heatmap/dist/styles.css';
 import axios from 'axios';
+import { useTheme } from '../../context/ThemeProvider';
+import { themeSetter } from '../../utils/ThemeSetter';
 
 const Container = styled.div`
   padding: 2rem;
   margin: 0 auto;
   margin-top: 64px;
   max-width: 1800px;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.background : themeSetter.dark.background};
+  color: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText};
+
+  @media (max-width: 1200px) {
+    padding: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+    width: 95%;
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+  }
 `;
 
 const Wrapper = styled.div`
   display: flex;
   gap: 1.5rem;
   width: 100%;
-  height: calc(100vh - 130px);
+  min-height: calc(100vh - 130px); 
+
+  @media (max-width: 992px) {
+    flex-direction: column;
+    gap: 1rem;
+    min-height: auto; /* Remove fixed height on smaller screens */
+  }
 `;
 
 const LeftWrapper = styled.div`
   flex: 1;
   min-width: 300px;
-  background: #ffffff;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.primaryColor : themeSetter.dark.primaryColor};
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: ${({ theme }) => theme === 'light' ? '0 4px 20px rgba(0, 0, 0, 0.06)' : '0 4px 20px rgba(0, 0, 0, 0.3)'};
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   overflow-y: auto;
+
+  @media (max-width: 992px) {
+    min-width: unset; /* Remove min-width on smaller screens */
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
 `;
 
 const RightWrapper = styled.div`
   flex: 3;
   min-width: 400px;
-  background: #ffffff;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.primaryColor : themeSetter.dark.primaryColor};
   border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: ${({ theme }) => theme === 'light' ? '0 4px 20px rgba(0, 0, 0, 0.06)' : '0 4px 20px rgba(0, 0, 0, 0.3)'};
   overflow-y: auto;
+
+  @media (max-width: 992px) {
+    min-width: unset; /* Remove min-width on smaller screens */
+    width: 100%;
+    padding: 1.5rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
 `;
 
 const Image = styled.img`
@@ -53,48 +96,68 @@ const Image = styled.img`
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 1.5rem;
-  border: 4px solid #f8fafc;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 4px solid ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.secondaryBackground : themeSetter.dark.secondaryBackground};
+  box-shadow: ${({ theme }) => theme === 'light' ? '0 4px 12px rgba(0, 0, 0, 0.1)' : '0 4px 12px rgba(0, 0, 0, 0.2)'};
   transition: transform 0.3s ease;
 
   &:hover {
     transform: scale(1.05);
+  }
+
+  @media (max-width: 480px) {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1rem;
   }
 `;
 
 const StudentName = styled.h2`
   font-size: 1.5rem;
   font-weight: 700;
-  color: #2d3748;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText};
   margin: 0 0 0.25rem;
   text-align: center;
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const StudentHandle = styled.p`
-  color: #667eea;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? '#667eea' : themeSetter.dark.secondaryBackground};
   font-size: 1rem;
   font-weight: 500;
   margin: 0 0 1.5rem;
   text-align: center;
+
+  @media (max-width: 480px) {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
 `;
 
 const DetailSection = styled.div`
   width: 100%;
   margin-bottom: 1.5rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid #edf2f7;
+  border-bottom: 1px solid ${({ theme, themeSetter }) => theme === 'light' ? '#edf2f7' : themeSetter.dark.secondaryBackground};
 
   &:last-child {
     border-bottom: none;
     margin-bottom: 0;
     padding-bottom: 0;
   }
+
+  @media (max-width: 480px) {
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+  }
 `;
 
 const SectionTitle = styled.h3`
   font-size: 0.875rem;
   font-weight: 600;
-  color: #718096;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? '#718096' : themeSetter.dark.primaryText};
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0 0 1rem;
@@ -106,8 +169,17 @@ const SectionTitle = styled.h3`
     display: inline-block;
     width: 12px;
     height: 2px;
-    background: #667eea;
+    background: ${({ theme, themeSetter }) => theme === 'light' ? '#667eea' : themeSetter.dark.secondaryBackground};
     margin-right: 8px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+    margin-bottom: 0.75rem;
+    &::before {
+      width: 10px;
+      margin-right: 6px;
+    }
   }
 `;
 
@@ -120,38 +192,61 @@ const DetailRow = styled.div`
   &:last-child {
     margin-bottom: 0;
   }
+
+  @media (max-width: 480px) {
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
 `;
 
 const DetailLabel = styled.span`
-  color: #718096;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? '#718096' : themeSetter.dark.primaryText};
   font-weight: 500;
 `;
 
 const DetailValue = styled.span`
-  color: #2d3748;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText};
   font-weight: 600;
   text-align: right;
   max-width: 60%;
+  word-break: break-word; /* Ensure long words break */
+
+  a {
+    color: ${({ theme, themeSetter }) => theme === 'light' ? '#4c51bf' : themeSetter.dark.secondaryBackground};
+    text-decoration: none;
+  }
 `;
 
 const RankBadge = styled.span`
   display: inline-block;
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  color: white;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? 'linear-gradient(135deg, #667eea, #764ba2)' : themeSetter.dark.secondaryBackground};
+  color: ${({ theme, themeSetter }) => theme === 'light' ? 'white' : themeSetter.dark.primaryText};
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   font-size: 0.75rem;
   font-weight: 600;
   margin-bottom: 1rem;
+
+  @media (max-width: 480px) {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.625rem;
+    margin-bottom: 0.75rem;
+  }
 `;
 
 const Toggler = styled.div`
   display: flex;
   gap: 0.75rem;
   margin-bottom: 1.5rem;
-  background: #f8fafc;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.secondaryBackground : themeSetter.dark.background};
   padding: 0.5rem;
   border-radius: 12px;
+
+  @media (max-width: 480px) {
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding: 0.4rem;
+  }
 `;
 
 const ToggleButton = styled.button`
@@ -163,23 +258,39 @@ const ToggleButton = styled.button`
   cursor: pointer;
   transition: all 0.2s;
   border: none;
-  background: ${({ active }) => (active ? '#ffffff' : 'transparent')};
-  color: ${({ active }) => (active ? '#4c51bf' : '#718096')};
-  box-shadow: ${({ active }) => (active ? '0 2px 8px rgba(0, 0, 0, 0.08)' : 'none')};
+  background: ${({ active, theme, themeSetter }) => (active
+    ? (theme === 'light' ? themeSetter.light.background : themeSetter.dark.primaryColor)
+    : 'transparent'
+  )};
+  color: ${({ active, theme, themeSetter }) => (active
+    ? (theme === 'light' ? '#4c51bf' : themeSetter.dark.primaryText)
+    : (theme === 'light' ? '#718096' : themeSetter.dark.secondaryBackground)
+  )};
+  box-shadow: ${({ active, theme }) => (active ? (theme === 'light' ? '0 2px 8px rgba(0, 0, 0, 0.08)' : '0 2px 8px rgba(0, 0, 0, 0.2)') : 'none')};
 
   &:hover {
-    color: #4c51bf;
+    color: ${({ theme, themeSetter }) => theme === 'light' ? '#4c51bf' : themeSetter.dark.primaryText};
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.75rem;
   }
 `;
 
 const ContentContainer = styled.div`
-  background: #f8fafc;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.secondaryBackground : themeSetter.dark.background};
   border-radius: 12px;
   padding: 1.5rem;
   min-height: 300px;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+    gap: 1rem;
+  }
 `;
 
 const RatingDisplay = styled.div`
@@ -187,18 +298,32 @@ const RatingDisplay = styled.div`
   align-items: center;
   gap: 0.5rem;
   margin-bottom: 0.5rem;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
 `;
 
 const RatingValue = styled.span`
   font-size: 1.25rem;
   font-weight: 700;
-  color: #4a5568;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? '#4a5568' : themeSetter.dark.primaryText};
+
+  @media (max-width: 480px) {
+    font-size: 1.1rem;
+  }
 `;
 
 const RatingChange = styled.span`
   font-size: 0.875rem;
   color: ${({ positive }) => (positive ? '#48bb78' : '#e53e3e')};
   font-weight: 600;
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const StarRating = styled.div`
@@ -208,7 +333,10 @@ const StarRating = styled.div`
 `;
 
 const Star = styled.span`
-  color: ${({ filled }) => (filled ? '#f6ad55' : '#e2e8f0')};
+  color: ${({ filled, theme, themeSetter }) => (filled
+    ? '#f6ad55'
+    : (theme === 'light' ? '#e2e8f0' : themeSetter.dark.secondaryBackground)
+  )};
   font-size: 1.125rem;
 `;
 
@@ -217,96 +345,176 @@ const ContestHistoryContainer = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
+
+  @media (max-width: 480px) {
+    gap: 1rem;
+  }
 `;
 
 const Filters = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 `;
 
 const FilterLabel = styled.span`
   font-size: 0.875rem;
   font-weight: 600;
-  color: #4a5568;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? '#4a5568' : themeSetter.dark.primaryText};
+
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const FilterSelect = styled.select`
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
-  border: 1px solid #e2e8f0;
-  background: white;
+  border: 1px solid ${({ theme, themeSetter }) => theme === 'light' ? '#e2e8f0' : themeSetter.dark.secondaryBackground};
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.background : themeSetter.dark.primaryColor};
+  color: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText};
   font-size: 0.875rem;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    border-color: #cbd5e0;
+    border-color: ${({ theme, themeSetter }) => theme === 'light' ? '#cbd5e0' : themeSetter.dark.primaryText};
   }
 
   &:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+    border-color: ${({ theme, themeSetter }) => theme === 'light' ? '#667eea' : themeSetter.dark.primaryText};
+    box-shadow: ${({ theme }) => theme === 'light' ? '0 0 0 2px rgba(102, 126, 234, 0.2)' : '0 0 0 2px rgba(245, 245, 245, 0.2)'};
+  }
+
+  @media (max-width: 480px) {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+    width: 100%; /* Make select full width on small screens */
   }
 `;
 
 const RatingGraph = styled.div`
-  background: white;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.background : themeSetter.dark.primaryColor};
   border-radius: 12px;
   padding: 1rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: ${({ theme }) => theme === 'light' ? '0 2px 8px rgba(0, 0, 0, 0.05)' : '0 2px 8px rgba(0, 0, 0, 0.2)'};
+
+  @media (max-width: 480px) {
+    padding: 0.75rem;
+    margin-bottom: 100px;
+  }
 `;
 
 const GraphTitle = styled.h4`
   font-size: 1rem;
   font-weight: 600;
-  color: #2d3748;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText};
   margin: 0 0 1rem;
+
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
 `;
 
 const Graph = styled.div`
   height: 300px;
+
+  @media (max-width: 480px) {
+    height: 200px; /* Reduce graph height on small screens */
+  }
+`;
+
+const TableContainer = styled.div`
+  overflow-x: auto; /* Allow horizontal scrolling for the table */
+  width: 100%;
 `;
 
 const ContestDetailsTable = styled.table`
   width: 100%;
   border-collapse: collapse;
-  background: white;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.background : themeSetter.dark.primaryColor};
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: ${({ theme }) => theme === 'light' ? '0 2px 8px rgba(0, 0, 0, 0.05)' : '0 2px 8px rgba(0, 0, 0, 0.2)'};
+
+  @media (max-width: 768px) {
+    display: block; /* Make table behave like a block element */
+  }
 `;
 
 const TableHeader = styled.thead`
-  background: #f8fafc;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.secondaryBackground : themeSetter.dark.background};
+
+  @media (max-width: 768px) {
+    display: none; /* Hide table header on small screens */
+  }
 `;
 
 const TableRow = styled.tr`
   &:nth-child(even) {
-    background: #f8fafc;
+    background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.secondaryBackground : themeSetter.dark.background};
   }
 
   &:hover {
-    background: #edf2f7;
+    background: ${({ theme, themeSetter }) => theme === 'light' ? '#edf2f7' : themeSetter.dark.secondaryBackground};
+  }
+
+  @media (max-width: 768px) {
+    display: block; /* Make row behave like a block element */
+    margin-bottom: 0.75rem;
+    border: 1px solid ${({ theme, themeSetter }) => theme === 'light' ? '#edf2f7' : themeSetter.dark.secondaryBackground};
+    border-radius: 8px;
+    padding: 0.75rem;
   }
 `;
 
 const TableCell = styled.td`
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
-  width: 10%;
-  border-bottom: 1px solid #edf2f7;
+  width: 10%; /* Keep for larger screens */
+  border-bottom: 1px solid ${({ theme, themeSetter }) => theme === 'light' ? '#edf2f7' : themeSetter.dark.secondaryBackground};
   text-align: ${({ align }) => align || 'left'};
+  color: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText};
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  @media (max-width: 768px) {
+    display: block; /* Make cell behave like a block element */
+    width: 100%;
+    text-align: right; /* Align value to the right */
+    padding: 0.25rem 0;
+    border-bottom: none;
+
+    &::before {
+      content: attr(data-label); /* Use data-label for the pseudo-element label */
+      float: left;
+      font-weight: 600;
+      color: ${({ theme, themeSetter }) => theme === 'light' ? '#4a5568' : themeSetter.dark.primaryText};
+    }
+  }
+
+  @media (max-width: 480px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const TableHeaderCell = styled.th`
   padding: 0.75rem 1rem;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #4a5568;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? '#4a5568' : themeSetter.dark.primaryText};
   text-align: ${({ align }) => align || 'left'};
-  background: #f8fafc;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.secondaryBackground : themeSetter.dark.background};
 `;
 
 const ProblemSolvingData = styled.div`
@@ -314,6 +522,10 @@ const ProblemSolvingData = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
+
+  @media (max-width: 480px) {
+    gap: 1rem;
+  }
 `;
 
 const StatsContainer = styled.div`
@@ -321,55 +533,91 @@ const StatsContainer = styled.div`
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   margin-bottom: 1rem;
+
+  @media (max-width: 992px) {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on medium screens */
+  }
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr; /* 1 column on small screens */
+    gap: 0.75rem;
+  }
 `;
 
 const StatCard = styled.div`
-  background: white;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.background : themeSetter.dark.primaryColor};
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: ${({ theme }) => theme === 'light' ? '0 2px 8px rgba(0, 0, 0, 0.05)' : '0 2px 8px rgba(0, 0, 0, 0.2)'};
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
 `;
 
 const StatValue = styled.div`
   font-size: 1.5rem;
   font-weight: 700;
-  color: #4c51bf;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? '#4c51bf' : themeSetter.dark.secondaryBackground};
   margin-bottom: 0.5rem;
+
+  @media (max-width: 480px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const StatLabel = styled.div`
   font-size: 0.875rem;
-  color: #718096;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? '#718096' : themeSetter.dark.primaryText};
   text-align: center;
+
+  @media (max-width: 480px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const ChartContainer = styled.div`
-  background: white;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.background : themeSetter.dark.primaryColor};
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: ${({ theme }) => theme === 'light' ? '0 2px 8px rgba(0, 0, 0, 0.05)' : '0 2px 8px rgba(0, 0, 0, 0.2)'};
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+  }
 `;
 
 const HeatmapContainer = styled.div`
-  background: white;
+  background: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.background : themeSetter.dark.primaryColor};
   border-radius: 12px;
   padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: ${({ theme }) => theme === 'light' ? '0 2px 8px rgba(0, 0, 0, 0.05)' : '0 2px 8px rgba(0, 0, 0, 0.2)'};
+
+  @media (max-width: 480px) {
+    padding: 1rem;
+    .react-calendar-heatmap text {
+      font-size: 8px; /* Adjust font size for heatmap labels on small screens */
+    }
+  }
 `;
 
 const HeatmapTitle = styled.h4`
   font-size: 1rem;
   font-weight: 600;
-  color: #2d3748;
+  color: ${({ theme, themeSetter }) => theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText};
   margin: 0 0 1rem;
+
+  @media (max-width: 480px) {
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
 `;
 
-const ContestHistory = () => {
+const ContestHistory = ({ studentHandle, theme, themeSetter }) => {
   const [timeFilter, setTimeFilter] = useState("last360");
-  const data = useAppSelector((state) => state.student).studentData;
   const [contestData, setContestData] = useState([]);
   const [filteredContests, setFilteredContests] = useState([]);
   const [ratingGraphData, setRatingGraphData] = useState([]);
@@ -405,13 +653,12 @@ const ContestHistory = () => {
     }
   }, [contestData, timeFilter]);
 
-  const fetchSubmissionData = async () => {
-    const handle = data.handle;
+  const fetchContestData = async () => {
     const token = sessionStorage.getItem("adminToken");
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/contest/all?handle=${handle}`,
+        `${import.meta.env.VITE_API_URL}/contest/all?handle=${studentHandle}`,
         {
           headers: {
             authorization: `Bearer ${token}`,
@@ -427,14 +674,17 @@ const ContestHistory = () => {
   };
 
   useEffect(() => {
-    fetchSubmissionData();
-  }, []);
+    if (studentHandle) {
+      fetchContestData();
+    }
+  }, [studentHandle]);
 
   return (
     <ContestHistoryContainer>
-      <Filters>
-        <FilterLabel>Filter By Days: </FilterLabel>
+      <Filters theme={theme} themeSetter={themeSetter}>
+        <FilterLabel theme={theme} themeSetter={themeSetter}>Filter By Days: </FilterLabel>
         <FilterSelect
+          theme={theme} themeSetter={themeSetter}
           value={timeFilter}
           onChange={(e) => setTimeFilter(e.target.value)}
         >
@@ -444,20 +694,28 @@ const ContestHistory = () => {
         </FilterSelect>
       </Filters>
 
-      <RatingGraph>
-        <GraphTitle>Rating Graph</GraphTitle>
+      <RatingGraph theme={theme} themeSetter={themeSetter}>
+        <GraphTitle theme={theme} themeSetter={themeSetter}>Rating Graph</GraphTitle>
         <Graph>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={ratingGraphData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#edf2f7" />
-              <XAxis dataKey="date" />
-              <YAxis />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" stroke={theme === 'light' ? '#edf2f7' : themeSetter.dark.secondaryBackground} />
+              <XAxis dataKey="date" stroke={theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText} />
+              <YAxis stroke={theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText} />
+              <Tooltip
+                contentStyle={{
+                  background: theme === 'light' ? themeSetter.light.primaryColor : themeSetter.dark.primaryColor,
+                  border: `1px solid ${theme === 'light' ? themeSetter.light.secondaryBackground : themeSetter.dark.secondaryBackground}`,
+                  color: theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText
+                }}
+                labelStyle={{ color: theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText }}
+                itemStyle={{ color: theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText }}
+              />
               <Legend />
               <Line
                 type="monotone"
                 dataKey="rating"
-                stroke="#667eea"
+                stroke={theme === 'light' ? '#667eea' : themeSetter.dark.secondaryBackground}
                 strokeWidth={2}
                 dot={{ r: 3 }}
                 activeDot={{ r: 6 }}
@@ -467,41 +725,42 @@ const ContestHistory = () => {
         </Graph>
       </RatingGraph>
 
-      <ContestDetailsTable>
-        <TableHeader>
-          <TableRow>
-            <TableHeaderCell>Contest Id</TableHeaderCell>
-            <TableHeaderCell>Contest Name</TableHeaderCell>
-            <TableHeaderCell align="center">Rank</TableHeaderCell>
-            <TableHeaderCell align="center">Old Rating</TableHeaderCell>
-            <TableHeaderCell align="center">New Rating</TableHeaderCell>
-            <TableHeaderCell align="center">Unsolved</TableHeaderCell>
-            <TableHeaderCell align="center">Contest Started</TableHeaderCell>
-          </TableRow>
-        </TableHeader>
-        <tbody>
-          {filteredContests.map((contest) => (
-            <TableRow key={contest.contestId}>
-              <TableCell>{contest.contestId}</TableCell>
-              <TableCell>{contest.contestName}</TableCell>
-              <TableCell align="center">{contest.rank}</TableCell>
-              <TableCell align="center">{contest.oldRating}</TableCell>
-              <TableCell align="center">{contest.newRating}</TableCell>
-              <TableCell align="center">{contest.unsolvedProblems}</TableCell>
-              <TableCell align="center">
-                {new Date(contest.contestStartTime * 1000).toLocaleDateString()}
-              </TableCell>
+      <TableContainer> {/* Added TableContainer for responsive table */}
+        <ContestDetailsTable theme={theme} themeSetter={themeSetter}>
+          <TableHeader theme={theme} themeSetter={themeSetter}>
+            <TableRow theme={theme} themeSetter={themeSetter}>
+              <TableHeaderCell theme={theme} themeSetter={themeSetter}>Contest Id</TableHeaderCell>
+              <TableHeaderCell theme={theme} themeSetter={themeSetter}>Contest Name</TableHeaderCell>
+              <TableHeaderCell theme={theme} themeSetter={themeSetter} align="center">Rank</TableHeaderCell>
+              <TableHeaderCell theme={theme} themeSetter={themeSetter} align="center">Old Rating</TableHeaderCell>
+              <TableHeaderCell theme={theme} themeSetter={themeSetter} align="center">New Rating</TableHeaderCell>
+              <TableHeaderCell theme={theme} themeSetter={themeSetter} align="center">Unsolved</TableHeaderCell>
+              <TableHeaderCell theme={theme} themeSetter={themeSetter} align="center">Contest Started</TableHeaderCell>
             </TableRow>
-          ))}
-        </tbody>
-      </ContestDetailsTable>
+          </TableHeader>
+          <tbody>
+            {filteredContests.map((contest) => (
+              <TableRow key={contest.contestId} theme={theme} themeSetter={themeSetter}>
+                <TableCell theme={theme} themeSetter={themeSetter} data-label="Contest Id">{contest.contestId}</TableCell>
+                <TableCell theme={theme} themeSetter={themeSetter} data-label="Contest Name">{contest.contestName}</TableCell>
+                <TableCell theme={theme} themeSetter={themeSetter} align="center" data-label="Rank">{contest.rank}</TableCell>
+                <TableCell theme={theme} themeSetter={themeSetter} align="center" data-label="Old Rating">{contest.oldRating}</TableCell>
+                <TableCell theme={theme} themeSetter={themeSetter} align="center" data-label="New Rating">{contest.newRating}</TableCell>
+                <TableCell theme={theme} themeSetter={themeSetter} align="center" data-label="Unsolved">{contest.unsolvedProblems}</TableCell>
+                <TableCell theme={theme} themeSetter={themeSetter} align="center" data-label="Contest Started">
+                  {new Date(contest.contestStartTime * 1000).toLocaleDateString()}
+                </TableCell>
+              </TableRow>
+            ))}
+          </tbody>
+        </ContestDetailsTable>
+      </TableContainer>
     </ContestHistoryContainer>
   );
 };
 
-const ProblemSolving = () => {
+const ProblemSolving = ({ studentHandle, theme, themeSetter }) => {
   const [timeFilter, setTimeFilter] = useState('All');
-  const data = useAppSelector((state) => state.student).studentData;
 
   const [problemData, setProblemData] = useState({
     totalProblems: 0,
@@ -513,39 +772,39 @@ const ProblemSolving = () => {
   })
 
   const fetchSubmissionData = async () => {
-    const handle = data.handle;
     const token = sessionStorage.getItem("adminToken");
-  
+
     let totalDays = 360;
     if (timeFilter === "last7") totalDays = 7;
     else if (timeFilter === "last30") totalDays = 30;
     else if (timeFilter === "last90") totalDays = 90;
-  
+    else if (timeFilter === "All") totalDays = 365 * 5;
+
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/submission/all?handle=${handle}&days=${totalDays}`,
+        `${import.meta.env.VITE_API_URL}/submission/all?handle=${studentHandle}&days=${totalDays}`,
         {
           headers: {
             authorization: `Bearer ${token}`,
           },
         }
       );
-  
+
       const result = response.data.data;
       const totalSolved = result?.totalSolved || 0;
       const allRatings = result?.ratings || [];
-      const allCreationTimes = result?.creationTimes || [];      
-  
+      const allCreationTimes = result?.creationTimes || [];
+
       if (allRatings.length > 0 || allCreationTimes.length > 0) {
         const sum = allRatings.reduce((a, b) => a + b, 0);
-        const avg = Math.round(sum / allRatings.length);
-        const maxRate = Math.max(...allRatings);
-  
+        const avg = allRatings.length > 0 ? Math.round(sum / allRatings.length) : 0;
+        const maxRate = allRatings.length > 0 ? Math.max(...allRatings) : 0;
+
         const problemBarData = {};
         allRatings.forEach((rating) => {
           problemBarData[rating] = (problemBarData[rating] || 0) + 1;
         });
-  
+
         const ratingDistribution = Object.entries(problemBarData)
           .map(([rating, count]) => ({
             ratings: Number(rating),
@@ -553,25 +812,25 @@ const ProblemSolving = () => {
           }))
           .sort((a, b) => a.ratings - b.ratings);
 
-          const problemHeatData = {};
-          allCreationTimes.forEach((unixSec) => {
-            const dateStr = new Date(unixSec * 1000)
-              .toISOString()
-              .slice(0, 10);
-            problemHeatData[dateStr] = (problemHeatData[dateStr] || 0) + 1;
-          });
-          
-          const problemHeatMap = Object.entries(problemHeatData)
-            .map(([date, count]) => ({
-              date,
-              count,
-            }))
-            .sort((a, b) => new Date(a.date) - new Date(b.date));          
-  
+        const problemHeatData = {};
+        allCreationTimes.forEach((unixSec) => {
+          const dateStr = new Date(unixSec * 1000)
+            .toISOString()
+            .slice(0, 10);
+          problemHeatData[dateStr] = (problemHeatData[dateStr] || 0) + 1;
+        });
+
+        const problemHeatMap = Object.entries(problemHeatData)
+          .map(([date, count]) => ({
+            date,
+            count,
+          }))
+          .sort((a, b) => new Date(a.date) - new Date(b.date));
+
         setProblemData({
           totalProblems: totalSolved,
           avgProbRate: avg,
-          problemPerDay: totalSolved ? Math.round(totalSolved / totalDays) : 0,
+          problemPerDay: totalSolved && totalDays ? Math.round(totalSolved / totalDays) : 0,
           mostDifficult: maxRate,
           ratingDistribution,
           problemHeatMap
@@ -589,17 +848,21 @@ const ProblemSolving = () => {
     } catch (error) {
       console.log("error", error);
     }
-  };  
+  };
 
   useEffect(() => {
-    fetchSubmissionData();
-  }, [timeFilter]);
+    if (studentHandle) {
+      fetchSubmissionData();
+    }
+  }, [timeFilter, studentHandle]);
 
   return (
     <ProblemSolvingData>
-      <Filters>
-        <FilterLabel>Filter By Days: </FilterLabel>
-        <FilterSelect value={timeFilter} onChange={(e) => setTimeFilter(e.target.value)}>
+      <Filters theme={theme} themeSetter={themeSetter}>
+        <FilterLabel theme={theme} themeSetter={themeSetter}>Filter By Days: </FilterLabel>
+        <FilterSelect
+          theme={theme} themeSetter={themeSetter}
+          value={timeFilter} onChange={(e) => setTimeFilter(e.target.value)}>
           <option value="All">All</option>
           <option value="last7">Last 7</option>
           <option value="last30">Last 30</option>
@@ -607,60 +870,68 @@ const ProblemSolving = () => {
         </FilterSelect>
       </Filters>
 
-      <StatsContainer>
-        <StatCard>
-          <StatValue>{problemData.totalProblems}</StatValue>
-          <StatLabel>Total Problems Solved</StatLabel>
+      <StatsContainer theme={theme} themeSetter={themeSetter}>
+        <StatCard theme={theme} themeSetter={themeSetter}>
+          <StatValue theme={theme} themeSetter={themeSetter}>{problemData.totalProblems}</StatValue>
+          <StatLabel theme={theme} themeSetter={themeSetter}>Total Problems Solved</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue>{problemData.avgProbRate}</StatValue>
-          <StatLabel>Average Problem Rating</StatLabel>
+        <StatCard theme={theme} themeSetter={themeSetter}>
+          <StatValue theme={theme} themeSetter={themeSetter}>{problemData.avgProbRate}</StatValue>
+          <StatLabel theme={theme} themeSetter={themeSetter}>Average Problem Rating</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue>{problemData.problemPerDay}</StatValue>
-          <StatLabel>Problems Per Day</StatLabel>
+        <StatCard theme={theme} themeSetter={themeSetter}>
+          <StatValue theme={theme} themeSetter={themeSetter}>{problemData.problemPerDay}</StatValue>
+          <StatLabel theme={theme} themeSetter={themeSetter}>Problems Per Day</StatLabel>
         </StatCard>
-        <StatCard>
-          <StatValue>{problemData.mostDifficult}</StatValue>
-          <StatLabel>Most Difficult Problem</StatLabel>
+        <StatCard theme={theme} themeSetter={themeSetter}>
+          <StatValue theme={theme} themeSetter={themeSetter}>{problemData.mostDifficult}</StatValue>
+          <StatLabel theme={theme} themeSetter={themeSetter}>Most Difficult Problem</StatLabel>
         </StatCard>
       </StatsContainer>
 
-      <ChartContainer>
-        <GraphTitle>Problems Solved by Rating</GraphTitle>
+      <ChartContainer theme={theme} themeSetter={themeSetter}>
+        <GraphTitle theme={theme} themeSetter={themeSetter}>Problems Solved by Rating</GraphTitle>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={problemData.ratingDistribution}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#edf2f7" />
-            <XAxis dataKey="ratings" />
-            <YAxis />
-            <Tooltip />
-            <Bar dataKey="count" fill="#667eea" radius={[4, 4, 0, 0]} />
+            <CartesianGrid strokeDasharray="3 3" stroke={theme === 'light' ? '#edf2f7' : themeSetter.dark.secondaryBackground} />
+            <XAxis dataKey="ratings" stroke={theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText} />
+            <YAxis stroke={theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText} />
+            <Tooltip
+              contentStyle={{
+                background: theme === 'light' ? themeSetter.light.primaryColor : themeSetter.dark.primaryColor,
+                border: `1px solid ${theme === 'light' ? themeSetter.light.secondaryBackground : themeSetter.dark.secondaryBackground}`,
+                color: theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText
+              }}
+              labelStyle={{ color: theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText }}
+              itemStyle={{ color: theme === 'light' ? themeSetter.light.primaryText : themeSetter.dark.primaryText }}
+            />
+            <Bar dataKey="count" fill={theme === 'light' ? '#667eea' : themeSetter.dark.secondaryBackground} radius={[4, 4, 0, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </ChartContainer>
 
-      <HeatmapContainer>
-        <HeatmapTitle>Submission Heatmap</HeatmapTitle>
+      <HeatmapContainer theme={theme} themeSetter={themeSetter}>
+        <HeatmapTitle theme={theme} themeSetter={themeSetter}>Submission Heatmap</HeatmapTitle>
         <CalendarHeatmap
           startDate={new Date(Date.now() - 365 * 86400 * 1000)}
           endDate={new Date()}
           values={problemData.problemHeatMap}
           classForValue={(value) => {
-            if (!value || value.count === 0) return 'color-empty';
-            if (value.count <= 2) return 'color-scale-1';
-            if (value.count <= 4) return 'color-scale-2';
-            if (value.count <= 6) return 'color-scale-3';
-            return 'color-scale-4';
+            if (!value || value.count === 0) return `color-empty-${theme}`;
+            if (value.count <= 2) return `color-scale-1-${theme}`;
+            if (value.count <= 4) return `color-scale-2-${theme}`;
+            if (value.count <= 6) return `color-scale-3-${theme}`;
+            return `color-scale-4-${theme}`;
           }}
           tooltipDataAttrs={(value) => {
             if (!value?.date) return { 'data-tip': 'No data' };
-          
+
             const formatted = new Date(value.date).toLocaleDateString('en-US', {
               month: 'short',
               day: 'numeric',
               year: 'numeric',
             });
-          
+
             return {
               'data-tip': `${formatted}: ${value.count} problem${value.count !== 1 ? 's' : ''} solved`,
             };
@@ -675,84 +946,108 @@ const ProfileSection = () => {
   const [toggleType, setToggleType] = useState('contest');
   const studentData = useAppSelector(state => state.student).studentData;
 
-  return (
-    <Container>
-      <Wrapper>
-        <LeftWrapper>
-          <Image src={studentData.avatar} alt="avatar" />
-          <StudentName>{studentData.fullName}</StudentName>
-          <StudentHandle>@{studentData.handle}</StudentHandle>
-          <RankBadge>{studentData.rank}</RankBadge>
+  const { theme } = useTheme();
 
-          <DetailSection>
-            <SectionTitle>Personal Details</SectionTitle>
+  const {
+    avatar,
+    fullName,
+    handle,
+    rank,
+    email,
+    phoneNumber,
+    organization,
+    rating,
+    maxRating,
+    contribution,
+    friendOfCount,
+    lastOnlineTimeSeconds,
+    registrationTimeSeconds,
+  } = studentData;
+
+  return (
+    <Container theme={theme} themeSetter={themeSetter}>
+      <Wrapper>
+        <LeftWrapper theme={theme} themeSetter={themeSetter}>
+          <Image src={avatar} alt="avatar" theme={theme} themeSetter={themeSetter} />
+          <StudentName theme={theme} themeSetter={themeSetter}>{fullName}</StudentName>
+          <StudentHandle theme={theme} themeSetter={themeSetter}>@{handle}</StudentHandle>
+          <RankBadge theme={theme} themeSetter={themeSetter}>{rank}</RankBadge>
+
+          <DetailSection theme={theme} themeSetter={themeSetter}>
+            <SectionTitle theme={theme} themeSetter={themeSetter}>Personal Details</SectionTitle>
             <DetailRow>
-              <DetailLabel>Email</DetailLabel>
-              <DetailValue>
-                <a href={`mailto:${studentData.email}`} style={{ color: '#4c51bf', textDecoration: 'none' }}>
-                  {studentData.email}
+              <DetailLabel theme={theme} themeSetter={themeSetter}>Email</DetailLabel>
+              <DetailValue theme={theme} themeSetter={themeSetter}>
+                <a href={`mailto:${email}`} style={{ color: theme === 'light' ? '#4c51bf' : themeSetter.dark.secondaryBackground }}>
+                  {email}
                 </a>
               </DetailValue>
             </DetailRow>
             <DetailRow>
-              <DetailLabel>Phone</DetailLabel>
-              <DetailValue>{studentData.phoneNumber}</DetailValue>
+              <DetailLabel theme={theme} themeSetter={themeSetter}>Phone</DetailLabel>
+              <DetailValue theme={theme} themeSetter={themeSetter}>{phoneNumber}</DetailValue>
             </DetailRow>
             <DetailRow>
-              <DetailLabel>Organization</DetailLabel>
-              <DetailValue>{studentData.organization}</DetailValue>
+              <DetailLabel theme={theme} themeSetter={themeSetter}>Organization</DetailLabel>
+              <DetailValue theme={theme} themeSetter={themeSetter}>{organization}</DetailValue>
             </DetailRow>
           </DetailSection>
 
-          <DetailSection>
-            <SectionTitle>Codeforces Stats</SectionTitle>
+          <DetailSection theme={theme} themeSetter={themeSetter}>
+            <SectionTitle theme={theme} themeSetter={themeSetter}>Codeforces Stats</SectionTitle>
             <RatingDisplay>
-              <RatingValue>Current Rating: {studentData.rating}</RatingValue>
-              <RatingChange positive={(studentData.rating - studentData.maxRating) > 0}>
-                {(studentData.rating - studentData.maxRating) > 0 ? '+' : ''}{(studentData.rating - studentData.maxRating)}
+              <RatingValue theme={theme} themeSetter={themeSetter}>Current Rating: {rating}</RatingValue>
+              <RatingChange positive={(rating - maxRating) > 0}>
+                {(rating - maxRating) > 0 ? '+' : ''}{(rating - maxRating)}
               </RatingChange>
             </RatingDisplay>
             <DetailRow>
-              <DetailLabel>Max Rating</DetailLabel>
-              <DetailValue>{studentData.maxRating}</DetailValue>
+              <DetailLabel theme={theme} themeSetter={themeSetter}>Max Rating</DetailLabel>
+              <DetailValue theme={theme} themeSetter={themeSetter}>{maxRating}</DetailValue>
             </DetailRow>
             <DetailRow>
-              <DetailLabel>Contribution</DetailLabel>
-              <DetailValue>{studentData.contribution}</DetailValue>
+              <DetailLabel theme={theme} themeSetter={themeSetter}>Contribution</DetailLabel>
+              <DetailValue theme={theme} themeSetter={themeSetter}>{contribution}</DetailValue>
             </DetailRow>
             <DetailRow>
-              <DetailLabel>Friends</DetailLabel>
-              <DetailValue>{studentData.friendOfCount}</DetailValue>
+              <DetailLabel theme={theme} themeSetter={themeSetter}>Friends</DetailLabel>
+              <DetailValue theme={theme} themeSetter={themeSetter}>{friendOfCount}</DetailValue>
             </DetailRow>
             <DetailRow>
-              <DetailLabel>Last Online</DetailLabel>
-              <DetailValue>{new Date(studentData.lastOnlineTimeSeconds * 1000).toLocaleString()}</DetailValue>
+              <DetailLabel theme={theme} themeSetter={themeSetter}>Last Online</DetailLabel>
+              <DetailValue theme={theme} themeSetter={themeSetter}>{new Date(lastOnlineTimeSeconds * 1000).toLocaleString()}</DetailValue>
             </DetailRow>
             <DetailRow>
-              <DetailLabel>Account Created</DetailLabel>
-              <DetailValue>{new Date(studentData.registrationTimeSeconds * 1000).toLocaleString()}</DetailValue>
+              <DetailLabel theme={theme} themeSetter={themeSetter}>Account Created</DetailLabel>
+              <DetailValue theme={theme} themeSetter={themeSetter}>{new Date(registrationTimeSeconds * 1000).toLocaleString()}</DetailValue>
             </DetailRow>
           </DetailSection>
         </LeftWrapper>
 
-        <RightWrapper>
-          <Toggler>
-            <ToggleButton 
-              active={toggleType === 'contest'} 
+        <RightWrapper theme={theme} themeSetter={themeSetter}>
+          <Toggler theme={theme} themeSetter={themeSetter}>
+            <ToggleButton
+              active={toggleType === 'contest'}
               onClick={() => setToggleType('contest')}
+              theme={theme} themeSetter={themeSetter}
             >
               Contest History
             </ToggleButton>
-            <ToggleButton 
-              active={toggleType === 'problems'} 
+            <ToggleButton
+              active={toggleType === 'problems'}
               onClick={() => setToggleType('problems')}
+              theme={theme} themeSetter={themeSetter}
             >
               Problem Solving
             </ToggleButton>
           </Toggler>
 
-          <ContentContainer>
-            {toggleType === 'contest' ? <ContestHistory /> : <ProblemSolving />}
+          <ContentContainer theme={theme} themeSetter={themeSetter}>
+            {toggleType === 'contest' ? (
+              <ContestHistory studentHandle={handle} theme={theme} themeSetter={themeSetter} />
+            ) : (
+              <ProblemSolving studentHandle={handle} theme={theme} themeSetter={themeSetter} />
+            )}
           </ContentContainer>
         </RightWrapper>
       </Wrapper>

@@ -11,23 +11,43 @@
     background-color: #f8fafc;
   }
   
-  .color-empty {
+  .color-empty-light {
     fill: #ebedf0;
   }
+
+  .color-empty-dark {
+    fill: black;
+  }
   
-  .color-scale-1 {
+  .color-scale-1-light {
     fill: #c6e48b;
   }
   
-  .color-scale-2 {
+  .color-scale-2-light {
     fill: #7bc96f;
   }
   
-  .color-scale-3 {
+  .color-scale-3-light {
     fill: #239a3b;
   }
   
-  .color-scale-4 {
+  .color-scale-4-light {
+    fill: #196127;
+  }
+  
+  .color-scale-1-dark {
+    fill: #c6e48b;
+  }
+  
+  .color-scale-2-dark {
+    fill: #7bc96f;
+  }
+  
+  .color-scale-3-dark {
+    fill: #239a3b;
+  }
+  
+  .color-scale-4-dark {
     fill: #196127;
   }
   
