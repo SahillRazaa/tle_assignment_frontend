@@ -292,7 +292,7 @@ const StudentTable = ({
             return `${days} Days`;
           })()}
         </TableCell>
-        <TableCell>{(student.emailReminder) / 4}</TableCell>
+        <TableCell>{Math.ceil((student.emailReminder) / 4)}</TableCell>
         <TableCell>
           <ActionIcons>
             <ViewProfileButton onClick={() => handleProfileView(student)}>
