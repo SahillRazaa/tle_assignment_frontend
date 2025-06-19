@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { ShowToast } from '../utils/Toster';
+import Loader from '../components/ui/Loader';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -15,23 +16,25 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem; /* Add padding for smaller screens */
+  padding: 1rem;
+  position: relative;
 
   @media (max-width: 480px) {
-    padding: 0.75rem; /* Reduce padding further on very small screens */
+    padding: 0.75rem;
   }
 `;
 
 const Wrapper = styled.div`
   width: 100%;
-  max-width: 28rem; /* Original max-width */
+  max-width: 28rem;
+  filter: ${props => props.isLoading? 'blur(5px)': 'none'};
 
   @media (max-width: 768px) {
-    max-width: 24rem; /* Slightly narrower on tablets */
+    max-width: 24rem;
   }
 
   @media (max-width: 480px) {
-    max-width: 90%; /* Take up more width on smaller phones */
+    max-width: 90%;
   }
 `;
 
@@ -50,7 +53,7 @@ const Title = styled.h1`
   color: #0f172a;
 
   @media (max-width: 480px) {
-    font-size: 1.5rem; /* Smaller title on mobile */
+    font-size: 1.5rem;
   }
 `;
 
@@ -59,7 +62,7 @@ const Subtitle = styled.p`
   margin-top: 0.25rem;
 
   @media (max-width: 480px) {
-    font-size: 0.875rem; /* Smaller subtitle on mobile */
+    font-size: 0.875rem;
   }
 `;
 
@@ -84,7 +87,7 @@ const Form = styled.form`
   gap: 1rem;
 
   @media (max-width: 480px) {
-    gap: 0.75rem; /* Slightly less gap between inputs on mobile */
+    gap: 0.75rem;
   }
 `;
 
@@ -99,8 +102,8 @@ const CredentialsContainer = styled.div`
   border-radius: 0.5rem;
 
   @media (max-width: 480px) {
-    margin-top: 1.5rem; /* Smaller top margin on mobile */
-    padding: 0.75rem; /* Reduced padding for credentials container */
+    margin-top: 1.5rem;
+    padding: 0.75rem;
   }
 `;
 
@@ -126,20 +129,41 @@ const Credential = styled.div`
   }
 
   @media (max-width: 480px) {
-    padding: 0.6rem 0.8rem; /* Slightly smaller padding for credentials */
-    font-size: 0.8rem; /* Smaller font for credentials on mobile */
+    padding: 0.6rem 0.8rem;
+    font-size: 0.8rem;
   }
 `;
 
 const EmailCred = styled.span`
   font-weight: 500;
-  word-break: break-all; /* Ensure long emails break to new line if necessary */
+  word-break: break-all;
 `;
 
 const PasswordCred = styled.span`
   font-weight: 500;
-  word-break: break-all; /* Ensure long passwords break to new line if necessary */
+  word-break: break-all;
 `;
+
+const LoadingContainer = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: ${props => props.isLoading? 'flex': 'none'};
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(219, 219, 219, 0.35);
+`;
+
+const LoadingText = styled.p`
+  color: #0f172a; /* Darker text for visibility */
+  font-size: 1.1rem;
+  margin-bottom: 1rem; /* Space between text and loader */
+  font-weight: 500;
+`;
+
 
 function Login() {
   const [isLoading, setIsLoading] = useState(false);
@@ -204,7 +228,7 @@ function Login() {
 
   return (
     <Container>
-      <Wrapper>
+      <Wrapper isLoading={isLoading}>
         <CenterText>
           <Title>Student Progress Management</Title>
           <Subtitle>Powered by TLE Eliminators</Subtitle>
@@ -270,6 +294,10 @@ function Login() {
           </CardContent>
         </StyledCard>
       </Wrapper>
+      <LoadingContainer isLoading={isLoading}>
+        <LoadingText>Please wait while the backend is getting ready...</LoadingText>
+        <Loader/>
+      </LoadingContainer>
     </Container>
   );
 }
