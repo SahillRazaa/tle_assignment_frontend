@@ -663,7 +663,7 @@ const StudentsOverview = () => {
         lastSyncedAt,
         lastOnlineDate,
         lastActive: diffInDays === 0 ? "Today" : diffInDays === 1 ? "Yesterday" : `${diffInDays} Days`,
-        emailReminder: emailReminder || 0
+        emailReminder: (emailReminder / 4) || 0
       };
     });
 
