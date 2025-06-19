@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { ShowToast } from '../../utils/Toster';
 import { useTheme } from '../../context/ThemeProvider';
 import { themeSetter } from '../../utils/ThemeSetter';
+import { clearStudentData } from '../../redux/slice/studentSlice';
+import { useAppDispatch } from '../../redux/hook';
 
 const Container = styled.div`
   position: fixed;
@@ -17,7 +19,7 @@ const Container = styled.div`
   align-items: center;
   padding: 0 3rem;
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px ${props => props.theme === 'light' ? props.themeSetter.light.primaryText : props.themeSetter.dark.primaryText};
 
   @media (max-width: 1024px) {
     padding: 0 2rem;
@@ -129,6 +131,7 @@ const HomeButton = styled(BaseButton)`
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleLogout = () => {
     sessionStorage.removeItem("adminToken");
@@ -137,6 +140,7 @@ const Navbar = () => {
       type: 'success',
       message: 'Admin Logged Out!'
     });
+    dispatch(clearStudentData());
     navigate('/');
   };
 

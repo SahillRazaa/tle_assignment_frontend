@@ -103,6 +103,8 @@ export default function CronBuilder() {
 
   const { theme } = useTheme();
 
+  const token = sessionStorage.getItem('adminToken');
+
   const ordinal = (n) => {
     const s = ["th", "st", "nd", "rd"], v = n % 100;
     return n + (s[(v - 20) % 10] || s[v] || s[0]);
@@ -141,6 +143,10 @@ export default function CronBuilder() {
       const res = await axios.put(`${import.meta.env.VITE_API_URL}/cron-config/${taskName}`, {
         schedule: cronExpr,
         enabled: true
+      }, {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
       });
   
       setCron(cronExpr);
@@ -166,7 +172,11 @@ export default function CronBuilder() {
 
   const fetchCron = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/cron-config/all`);
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/cron-config/all`, {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      });
       const data = response.data[0];
   
       const cronValue = data?.schedule || "0 0 * * *";

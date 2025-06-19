@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useTheme } from '../../context/ThemeProvider';
+import { themeSetter } from '../../utils/ThemeSetter';
 
 const FooterContainer = styled.footer`
   display: flex;
@@ -7,10 +9,11 @@ const FooterContainer = styled.footer`
   justify-content: space-between;
   align-items: center;
   padding: 19px 5%;
-  background: #1e293b;
-  color: white;
+  background: ${props => props.theme === 'light' ? props.themeSetter.light.background : props.themeSetter.dark.background};
+  color: ${props => props.theme === 'light' ? props.themeSetter.light.primaryText : props.themeSetter.dark.primaryText};
   font-weight: bold;
   text-align: center;
+  box-shadow: 0 2px 10px ${props => props.theme === 'light' ? props.themeSetter.light.primaryText : props.themeSetter.dark.primaryText};
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -43,13 +46,17 @@ const Heart = styled.span`
 `;
 
 export default function Footer() {
+
+  const { theme } = useTheme();
+
   return (
-    <FooterContainer>
-      <CopyrightText> 2025 ChairManager. All Rights Reserved.</CopyrightText>
+    <FooterContainer theme={theme} themeSetter={themeSetter}>
+      <CopyrightText>© 2025 Sahil Raza Ansari. All rights reserved.
+      </CopyrightText>
       <MadeWithLove>
         Made With
         <Heart>❤️</Heart>
-        By Certimate Infotech Pvt. Ltd.
+        By Sahil Raza Ansari
       </MadeWithLove>
     </FooterContainer>
   );
