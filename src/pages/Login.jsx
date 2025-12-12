@@ -173,7 +173,7 @@ function Login() {
   const [copiedPassword, setCopiedPassword] = useState(false);
 
   const adminEmail = "tleassignment@gmail.com"
-  const adminPassword = "submittedbysahil"
+  const adminPassword = "submittedbymonisha"
 
   const {
     register,
