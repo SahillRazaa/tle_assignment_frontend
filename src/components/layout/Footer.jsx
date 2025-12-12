@@ -51,12 +51,12 @@ export default function Footer() {
 
   return (
     <FooterContainer theme={theme} themeSetter={themeSetter}>
-      <CopyrightText>© 2025 Sahil Raza Ansari. All rights reserved.
+      <CopyrightText>© 2025 Monisha Kanugula. All rights reserved.
       </CopyrightText>
       <MadeWithLove>
         Made With
         <Heart>❤️</Heart>
-        By Sahil Raza Ansari
+        By Monisha Kanugula
       </MadeWithLove>
     </FooterContainer>
   );
